@@ -1,0 +1,5 @@
+hostname {{ item.hostname }}
+
+
+{# SNMP #}
+snmp-server community {{ item.SNMP_KEY }} RO

@@ -1,0 +1,25 @@
+---
+
+- name: PLAY START
+  hosts: all-ios
+  gather_facts: no
+  connection: local
+
+  tasks:
+
+   - name: OBTAIN LOGIN CREDS
+     include_vars: secrets.yml
+   
+   - name: DEFINE PROVIDER
+     set_fact:
+       mydetail:
+         host: "{{ ansible_host }}"
+         username: "{{ creds['username'] }}"
+         password: "{{ creds['password'] }}"
+         auth_pass: "{{ creds['auth_pass'] }}"
+
+   - name: SAVE CONFIGURATION TO FILE
+     ios_config:
+       provider: "{{ mydetail }}"
+       authorize: yes
+       backup: yes

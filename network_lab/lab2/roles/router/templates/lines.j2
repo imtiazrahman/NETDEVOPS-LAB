@@ -1,0 +1,13 @@
+{# LINE CONSOLE ACCESS#}
+line con 0
+ password {{ item.CON_PASS}}
+ login
+ exit
+
+{# LINE VTY ACCESS #}
+line vty 0 4
+ access-class 10 in
+ exec-timeout 3 0
+ login local
+ transport input ssh
+ exit

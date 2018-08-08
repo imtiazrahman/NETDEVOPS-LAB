@@ -1,0 +1,18 @@
+---
+
+- name: PLAY-START
+  hosts: node1
+  gather_facts: no
+  become: yes
+  become_user: root
+
+  tasks:
+    - name: Install multiple packages
+      apt:
+        name: "{{ pkg }}"
+        state: present
+      vars:
+        pkg:
+          - iftop
+          - slurm
+          - bmon

@@ -1,0 +1,9 @@
+---
+
+- name: Generate Router Config
+  hosts: new-router
+  connection: local
+  gather_facts: no
+
+  roles:
+    - router 

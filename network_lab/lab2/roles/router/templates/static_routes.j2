@@ -1,0 +1,4 @@
+{# Static Routes#}
+{% for r in st_routes %}
+ ip route {{ st_routes[r].dest_net }} {{ st_routes[r].sub }} {{ st_routes[r].gw }}
+{% endfor %}

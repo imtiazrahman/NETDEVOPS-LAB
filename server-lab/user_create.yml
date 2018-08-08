@@ -1,0 +1,42 @@
+---
+
+- name: PALY-START
+  hosts: nodes
+  gather_facts: yes
+  become: yes
+  become_user: root
+
+  tasks:
+  - name: Create User on UBUNTU
+    user:
+      name: sanog
+      password: '<PUT YOUR PASSWORD HASH VALUE>'
+      groups:
+       - sudo
+      state: present
+      shell: /bin/bash
+      system: no
+      createhome: yes
+      home: /home/sanog
+    when: ansible_os_family == "Debian"
+
+  - name: Create User on CENTOS
+    user:
+      name: sanog
+      password: 'PUT YOUR PASSWORD HASH VALUE'
+      groups:
+       - wheel
+      state: present
+      shell: /bin/bash
+      system: no
+      createhome: yes
+      home: /home/sanog
+    when: ansible_os_family == "RedHat"
+
+  - name: Edit the sudo file
+    lineinfile:
+      path: /etc/sudoers
+      state: present
+      regexp: '^%sanog\s'
+      line: '%sanog ALL=(ALL)       ALL'
+    when: ansible_os_family == "RedHat"

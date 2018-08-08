@@ -1,0 +1,57 @@
+---
+
+r_router:
+ hostname: "BRANCH1"
+ isp1: "ISP1"
+ isp2: "ISP2"
+ router_id: "101"
+ ospf_area1: "area 1"
+ ospf_area2: "area 2"
+ ISP1_DC: "10.50.50.0/30"
+ ISP2_DC: "10.201.201.0/29"
+ ISP1_DR: "10.60.60.0/30"
+ ISP2_DR: "10.202.202.0/29"
+ ISP1_BR: "10.0.26.0/30"
+ ISP2_BR: "10.0.51.0/30"
+ ISP1_tun_dc: "10.0.1.0/30"
+ ISP2_tun_dc: "10.0.2.0/30"
+ ISP1_tun_dr: "10.0.4.0/30"
+ ISP2_tun_dr: "10.0.5.0/30"
+ mgmt_ip: "192.168.45.4/24"
+ ipv4_tun0_src: "FastEthernet0/1"
+ ipv4_tun1_src: "FastEthernet1/0"
+ SNMP_KEY: "SnmpString"
+ CON_PASS: "p@$$word"
+
+filter_list:
+ {
+ 'rules1': {'src': "{{ item.mgmt_ip | ipaddr('1') | ipaddr('address') }}" } ,
+ 'rules2': {'src': "{{ item.ISP1_DC | ipaddr('2') | ipaddr('address') }}" } ,
+ 'rules3': {'src': "{{ item.ISP2_DC | ipaddr('2') | ipaddr('address') }}" } ,
+ 'rules4': {'src': "{{ item.ISP1_DR | ipaddr('2') | ipaddr('address') }}" } ,
+ 'rules5': {'src': "{{ item.ISP2_DR | ipaddr('2') | ipaddr('address') }}" } ,
+ }
+
+st_routes:
+ {
+ 'routes1' : {'dest_net': "{{ item.ISP1_DC | ipaddr('network') }}", 'sub': "{{ item.ISP1_DC | ipv4('netmask') }}", 'gw': "{{item.ISP1_BR | ipaddr('1') | ipaddr('address') }}" }, 
+ 'routes2' : {'dest_net': "{{ item.ISP2_DC | ipaddr('network') }}", 'sub': "{{ item.ISP2_DC | ipv4('netmask') }}", 'gw': "{{item.ISP2_BR | ipaddr('1') | ipaddr('address') }}" },
+ 'routes3' : {'dest_net': "{{ item.ISP1_DR | ipaddr('network') }}", 'sub': "{{ item.ISP1_DR | ipv4('netmask') }}", 'gw': "{{item.ISP1_BR | ipaddr('1') | ipaddr('address') }}" }, 
+ 'routes4' : {'dest_net': "{{ item.ISP2_DR | ipaddr('network') }}", 'sub': "{{ item.ISP2_DR | ipv4('netmask') }}", 'gw': "{{item.ISP2_BR | ipaddr('1') | ipaddr('address') }}" }, 
+ }
+
+physical_int: 
+ { 
+ 'FastEthernet0/1' : {'addrs': "{{ item.ISP1_BR | ipaddr('2') | ipaddr('address') }}", 'sub' : "{{ item.ISP1_BR | ipv4('netmask') }}", 'dess' : "{{ item.isp1 }}" } ,
+ 'FastEthernet1/0' : {'addrs': "{{ item.ISP2_BR | ipaddr('2') | ipaddr('address') }}", 'sub' : "{{ item.ISP2_BR | ipv4('netmask') }}", 'dess' : "{{ item.isp2 }}" } ,
+ }
+
+tun_interface:
+ {
+ 'Tunnel0' : {'addrs': "{{ item.ISP1_tun_dc | ipaddr('2') | ipaddr('address') }}", 'sub' : "{{ item.ISP1_tun_dc | ipv4('netmask') }}", 'src' : "{{ item.ipv4_tun0_src }}", 'dst' : "{{ item.ISP1_DC | ipaddr('2') | ipaddr('address') }}" } ,
+ 'Tunnel1' : {'addrs': "{{ item.ISP2_tun_dc | ipaddr('2') | ipaddr('address') }}", 'sub' : "{{ item.ISP2_tun_dc | ipv4('netmask') }}", 'src' : "{{ item.ipv4_tun1_src }}", 'dst' : "{{ item.ISP2_DC | ipaddr('2') | ipaddr('address') }}" } ,
+ 'Tunnel10' : {'addrs': "{{ item.ISP1_tun_dr | ipaddr('2') | ipaddr('address') }}", 'sub' : "{{ item.ISP1_tun_dr | ipv4('netmask') }}", 'src' : "{{ item.ipv4_tun0_src }}", 'dst' : "{{ item.ISP1_DR | ipaddr('2') | ipaddr('address') }}" } ,
+ 'Tunnel11' : {'addrs': "{{ item.ISP2_tun_dr | ipaddr('2') | ipaddr('address') }}", 'sub' : "{{ item.ISP2_tun_dr | ipv4('netmask') }}", 'src' : "{{ item.ipv4_tun1_src }}", 'dst' : "{{ item.ISP2_DR | ipaddr('2') | ipaddr('address') }}" } ,
+ }
+
+ 

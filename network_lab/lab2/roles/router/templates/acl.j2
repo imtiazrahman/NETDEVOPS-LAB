@@ -1,0 +1,4 @@
+{# Standard ACL #}
+{% for acl in filter_list %}
+ access-list 10 permit {{ filter_list[acl].src }}
+{% endfor %}

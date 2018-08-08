@@ -1,0 +1,9 @@
+{#  OSPF Routes #}
+router ospf 1
+ router-id {{ item.router_id }}.{{ item.router_id }}.{{ item.router_id }}.{{ item.router_id }}
+ {{ item.ospf_area1 }} nssa
+ {{ item.ospf_area2 }} nssa
+ redistribute connected subnets
+ network {{ item.ISP1_tun_dc | ipaddr('2') | ipaddr('address') }} 0.0.0.0 {{ item.ospf_area1}}
+ network {{ item.ISP2_tun_dc | ipaddr('2') | ipaddr('address') }} 0.0.0.0 {{ item.ospf_area2}}
+ exit

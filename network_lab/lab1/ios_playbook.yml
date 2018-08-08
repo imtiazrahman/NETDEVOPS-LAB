@@ -1,0 +1,54 @@
+---
+
+- name: PLAY START
+  hosts: ios-routers
+  #hosts: v6-router
+  gather_facts: no
+  connection: local
+
+  tasks:
+
+   - name: LOGIN INFORMATION
+     include_vars: secrets.yml
+   
+   - name: DEFINE PROVIDER
+     set_fact:
+       provider:
+         host: "{{ ansible_host }}"
+         username: "{{ creds['username'] }}"
+         password: "{{ creds['password'] }}"
+         auth_pass: "{{ creds['auth_pass'] }}"
+
+   - name: ADD BANNER
+     ios_config:
+       provider: "{{ provider }}"
+       lines:
+         - banner motd ^Welcom to NOGS^
+
+#   - name: ADD ACL
+#     ios_config:
+#       provider: "{{ provider }}"
+#       lines:
+#         - access-list 10 permit 192.168.45.1
+
+#   - name: ASSAIGN ACL
+#     ios_config:
+#       provider: "{{ provider }}"
+#       lines:
+#         - access-class 10 in
+#       parents: line vty 0 15
+
+   - name: SHOW RUNING CONFIGURATION
+     ios_command:
+       provider: "{{ provider }}"
+       commands:
+         - show run
+     register: config
+
+#   - debug: var=config.stdout_lines
+
+   - name: SAVE CONFIGURATION
+     copy:
+       content: "{{ config.stdout[0] }}"
+       dest: "./backup/{{ inventory_hostname }}.conf"
+

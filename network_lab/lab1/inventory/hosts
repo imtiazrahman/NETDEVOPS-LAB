@@ -1,0 +1,4 @@
+[all-ios]
+SOUTH ansible_host=2001:db8::20
+EAST ansible_host=2001:db8::30
+WEST ansible_host=192.168.45.4

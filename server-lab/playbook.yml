@@ -1,0 +1,10 @@
+---
+
+- hosts: all
+  gather_facts: no
+
+  tasks:
+   - name: Create the Directory
+     file:
+       path: /home/labuser/bdnog9
+       state: directory

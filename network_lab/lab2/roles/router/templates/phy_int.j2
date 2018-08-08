@@ -1,0 +1,7 @@
+{# Physical interface #}
+{% for interface in physical_int %}
+interface {{ interface }}
+ description ->> {{ physical_int[interface].dess }}
+ ip address {{ physical_int[interface].addrs }} {{ physical_int[interface].sub }}
+ no shutdown
+{% endfor %}

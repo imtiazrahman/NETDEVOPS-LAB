@@ -1,0 +1,15 @@
+---
+
+  - name: SET IP ADDRESS TO SOUTH ROUTER
+    ios_config:
+      provider: "{{ provider }}"
+      authorize: yes
+      parents: "interface FastEthernet0/1"
+      lines:
+        - no ip address
+        - no ipv6 address
+        - description SOUTH-CUSTOMER
+        - ip address 10.10.20.1 255.255.255.248
+        - ipv6 address 2001:db8:2001::9/64
+      after: "no shutdown"
+    when: ansible_host == "2001:db8::20"

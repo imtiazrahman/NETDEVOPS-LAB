@@ -1,0 +1,27 @@
+---
+  - name: OBTAIN LOGIN INFORMATION
+    include_vars: ../../../secrets.yml
+
+  - name: DEFINE PROVIDER
+    set_fact:
+      provider:
+        host: "{{ ansible_host }}"
+        username: "{{ creds['username'] }}"
+        password: "{{ creds['password'] }}"
+        auth_pass: "{{ creds['auth_pass'] }}"
+  
+  - name: CONFIGURING NEW  ROUTER
+    ios_config:
+      src: templates/hostname.j2
+      provider: "{{ provider }}"
+      authorize: yes
+    with_items:
+      - "{{ r_router }}"
+
+  - name: CONFIGURING INTERFACE
+    ios_config:
+      src: templates/phy_int.j2
+      provider: "{{ provider }}"
+      authorize: yes
+    with_items:
+      - "{{ r_router }}"

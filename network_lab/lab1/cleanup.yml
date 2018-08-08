@@ -1,0 +1,77 @@
+---
+
+- hosts: all-ios
+  gather_facts: no
+  connection: local
+
+  tasks:
+
+   - name: OBTAIN LOGIN INFORMATION
+     include_vars: secrets.yml
+
+   - name: DEFINE PROVIDER
+     set_fact:
+       provider:
+         host: "{{ ansible_host }}"
+         username: "{{ creds['username'] }}"
+         password: "{{ creds['password'] }}"
+         auth_pass: "{{ creds['auth_pass'] }}"
+
+   - name: REMOVE BANNER
+     ios_config:
+       provider: "{{ provider }}"
+       authorize: yes
+       lines:
+         - no banner motd ^Welcom to SGNOG 5^
+
+   - name: REMOVE ACL
+     ios_config:
+       provider: "{{ provider }}"
+       authorize: yes
+       #parents: "ip access-list standard 10"
+       lines:
+         - no ip access-list standard 10
+         - no ipv6 access-list v6_list
+
+ #  - name: REMOVE IPV6 ACL
+ #    ios_config:
+ #      provider: "{{ provider }}"
+ #      authorize: yes
+ #      #parents: "ipv6 access-list v6_list"
+ #      lines:
+ #        - no ipv6 access-list v6_list
+
+   - name: REMOVE ACL FROM LINE VTY
+     ios_config:
+       provider: "{{ provider }}"
+       authorize: yes
+       parents: "line vty 0 15"
+       lines:
+         - no access-class 10 in
+         - no ipv6 access-class v6_list in
+
+#   - name: REMOVE IPV6 ACL FROM LINE VTY
+#     ios_config:
+#       provider: "{{ provider }}"
+#       authorize: yes
+#       parents: "line vty 0 15"
+#       lines:
+#         - no ipv6 access-class v6_list in
+
+   - name: REMOVE IP ADDRESS FROM ALL ROUTER
+     ios_config:
+       provider: "{{ provider }}"
+       authorize: yes
+       parents: "interface FastEthernet0/1"
+       lines:
+         - no ip address
+         - no ipv6 address
+         - no description NORTH-CUSTOMER
+         - shutdown
+
+   - name: SAVE & BACKUP CONFIGURATION
+     ios_config:
+       provider: "{{ provider }}"
+       authorize: yes
+       save: yes
+       backup: yes

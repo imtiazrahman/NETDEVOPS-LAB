@@ -1,0 +1,41 @@
+---
+
+- name: PLAY-START
+  hosts: all
+  gather_facts: no
+  become: yes
+  become_user: root
+
+  tasks:
+    - name: Allow port 22/SSH traffic
+      iptables:
+        chain: INPUT
+        destination_port: 22
+        jump: ACCEPT
+        protocol: tcp
+
+    - name: Allow port 80/HTTP traffic
+      iptables:
+        chain: INPUT
+        destination_port: 80
+        jump: ACCEPT
+        protocol: tcp
+
+    - name: Allow port 443/HTTPS traffic
+      iptables:
+        chain: INPUT
+        destination_port: 443
+        jump: ACCEPT
+        protocol: tcp
+
+    - name: Allow port 25/ICMP traffic
+      iptables:
+        chain: INPUT
+        destination_port: 25
+        jump: ACCEPT
+        protocol: tcp
+
+    - name: Drop traffic without rule
+      iptables:
+        chain: INPUT
+        jump: DROP

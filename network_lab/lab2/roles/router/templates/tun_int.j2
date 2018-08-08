@@ -1,0 +1,10 @@
+{# Tunnel interface #}
+{% for interface in tun_interface %}
+interface {{ interface }}
+ ip address {{ tun_interface[interface].addrs }} {{ tun_interface[interface].sub }}
+ keepalive 10 3
+ tunnel source {{ tun_interface[interface].src }}
+ tunnel destination {{ tun_interface[interface].dst }}
+ no shutdown
+ exit
+{% endfor %}

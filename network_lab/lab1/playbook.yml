@@ -1,0 +1,60 @@
+---
+
+- hosts: all-ios
+  gather_facts: no
+  connection: local
+
+  tasks:
+
+   - name: OBTAIN LOGIN INFORMATION
+     include_vars: secrets.yml
+
+   - name: DEFINE PROVIDER
+     set_fact:
+       provider:
+         host: "{{ ansible_host }}"
+         username: "{{ creds['username'] }}"
+         password: "{{ creds['password'] }}"
+         auth_pass: "{{ creds['auth_pass'] }}"
+
+   - name: ADD BANNER
+     ios_config:
+       provider: "{{ provider }}"
+       authorize: yes
+       lines:
+         - banner motd ^ Welcom to BDNOG7 ^
+
+   - name: CREATE STANDARD ACL
+     ios_config:
+       provider: "{{ provider }}"
+       authorize: yes
+       parents: "ip access-list standard 10"
+       lines:
+         - permit host 192.168.45.1 log
+
+   - name: CREATE IPV6 ACL
+     ios_config:
+       provider: "{{ provider }}"
+       authorize: yes
+       parents: "ipv6 access-list v6_list"
+       lines:
+         - permit ipv6 host 2001:db8::10 any log
+
+   - name: SET ACL (IPv4 IPv6) TO LINE VTY
+     ios_config:
+       provider: "{{ provider }}"
+       authorize: yes
+       parents: "line vty 0 15"
+       lines:
+         - access-class 10 in
+         - ipv6 access-class v6_list in
+
+   - name: SOUTH
+     include: south_ip.yml
+
+   - name: SAVE & BACKUP CONFIGURATION
+     ios_config:
+       provider: "{{ provider }}"
+       authorize: yes
+       save: yes
+       backup: yes
