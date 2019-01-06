@@ -1,6 +1,6 @@
 ---
 
-- name: PLAY-START-FOR-UBUNTU
+- name: PLAY-START
   hosts: node1
   gather_facts: no
   become: yes
@@ -14,34 +14,11 @@
       notify:
         - start nginx
 
-#    - name: Insert Index Page
-#      template:
-#        src: index.html
-#        dest: /var/www/html/index.nginx-debian.html
+    - name: Insert Index Page
+      template:
+        src: index.html
+        dest: /usr/share/nginx/html/index.html
 
   handlers:
    - name: start nginx
      service: name=nginx state=started
-
-- name: PLAY-START-FOR-CENTOS
-  hosts: node2
-  gather_facts: no
-  become: yes
-  become_user: root
-
-  tasks:
-    - name: Install apache web server on centos server
-      yum:
-        name: httpd
-        state: present
-      notify:
-        - start apache
-
-#    - name: Insert Index Page
-#      template:
-#        src: index.html
-#        dest: /var/www/html/index.html
-
-  handlers:
-   - name: start apache
-     service: name=httpd state=restarted
